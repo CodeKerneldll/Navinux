@@ -19,7 +19,7 @@ class Navegador(QMainWindow):
     def init_ui(self):
         """Configura a interface do usuário."""
         # Definindo o nome do aplicativo e o ícone
-        self.setWindowTitle("Navinux - Navegador Leve")
+        self.setWindowTitle("Navinux Lite - Navegador Muito Leve")
         self.setWindowIcon(QIcon('icon.png'))  # Ícone do navegador
 
         # Configuração da barra de menu
