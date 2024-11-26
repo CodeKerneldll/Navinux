@@ -2,114 +2,86 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtGui import *
+from PyQt5.QtGui import QIcon
 
-class BrowserTab(QWebEngineView):
+class Navegador(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setUrl(QUrl("https://www.google.com"))
-        self.urlChanged.connect(self.update_url)
-
-    def update_url(self, q):
-        self.browser_window.update_url(q)
-
-class BrowserWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        # Inicializa a janela principal
-        self.setWindowTitle("Navenux Versão Beta By Codekernel")
-
-        # Criação do central widget para o navegador
-        self.tabs = QTabWidget()
-        self.setCentralWidget(self.tabs)
-
-        # Ações da barra de navegação
-        navbar = QToolBar()
-        self.addToolBar(navbar)
-
-        # Botão de voltar
-        back_btn = QAction("Voltar", self)
-        back_btn.triggered.connect(self.back)
-        navbar.addAction(back_btn)
-
-        # Botão de avançar
-        forward_btn = QAction("Avançar", self)
-        forward_btn.triggered.connect(self.forward)
-        navbar.addAction(forward_btn)
-
-        # Botão de recarregar
-        reload_btn = QAction("Recarregar", self)
-        reload_btn.triggered.connect(self.reload)
-        navbar.addAction(reload_btn)
-
-        # Barra de endereço
-        self.url_bar = QLineEdit()
+        
+        # Inicialização
+        self.browser = QTabWidget()
+        self.setCentralWidget(self.browser)
+        self.browser.setTabsClosable(True)
+        self.browser.tabCloseRequested.connect(self.close_tab)
+        
+        # Menu
+        self.init_ui()
+        
+    def init_ui(self):
+        # Definindo o nome do aplicativo
+        self.setWindowTitle("Navinux - Navegador Leve")
+        self.setWindowIcon(QIcon('icon.png'))  # Ícone do navegador
+        
+        # Configuração da barra de menu
+        menubar = self.menuBar()
+        file_menu = menubar.addMenu("Arquivo")
+        
+        # Ação para nova aba
+        new_tab_action = QAction("Nova Aba", self)
+        new_tab_action.triggered.connect(self.new_tab)
+        file_menu.addAction(new_tab_action)
+        
+        # Ação para fechar
+        close_action = QAction("Fechar", self)
+        close_action.triggered.connect(self.close)
+        file_menu.addAction(close_action)
+        
+        # Criar a barra de ferramentas
+        self.toolbar = self.addToolBar("Barra de Navegação")
+        
+        # Barra de navegação (QLineEdit)
+        self.url_bar = QLineEdit(self)
         self.url_bar.returnPressed.connect(self.navigate_to_url)
-        navbar.addWidget(self.url_bar)
+        
+        # Adiciona o QLineEdit à barra de ferramentas
+        self.toolbar.addWidget(self.url_bar)
+        
+        # Criar a primeira aba
+        self.new_tab()
 
-        # Criar uma aba inicial
-        self.add_new_tab()
+    def new_tab(self):
+        # Criar um navegador para uma nova aba
+        tab = QWidget()
+        browser = QWebEngineView()
+        browser.setUrl(QUrl("http://www.google.com"))
+        browser.urlChanged.connect(self.update_url_bar)
+        
+        layout = QVBoxLayout()
+        layout.addWidget(browser)
+        tab.setLayout(layout)
+        
+        index = self.browser.addTab(tab, "Nova Aba")
+        self.browser.setCurrentIndex(index)
 
-        # Ativar histórico de navegação
-        self.history = []
-
-        # Atualizar a barra de endereços quando mudar de URL
-        self.current_tab().urlChanged.connect(self.update_url)
-
-    def current_tab(self):
-        # Certifique-se de que uma aba está aberta
-        return self.tabs.currentWidget() if self.tabs.count() > 0 else None
-
-    def add_new_tab(self):
-        new_tab = BrowserTab()
-        new_tab.browser_window = self  # Conectar a janela principal à aba
-        self.tabs.addTab(new_tab, "Nova Aba")
-        self.tabs.setCurrentWidget(new_tab)
-
-    def back(self):
-        tab = self.current_tab()
-        if tab:
-            tab.back()
-
-    def forward(self):
-        tab = self.current_tab()
-        if tab:
-            tab.forward()
-
-    def reload(self):
-        tab = self.current_tab()
-        if tab:
-            tab.reload()
+    def close_tab(self, index):
+        if self.browser.count() > 1:
+            self.browser.removeTab(index)
+        else:
+            self.close()
 
     def navigate_to_url(self):
+        # Navegar para a URL digitada
         url = self.url_bar.text()
-        tab = self.current_tab()
-        if tab:
-            tab.setUrl(QUrl(url))
-            self.history.append(url)  # Adicionar ao histórico
+        current_browser = self.browser.currentWidget().findChild(QWebEngineView)
+        current_browser.setUrl(QUrl(url))
 
-    def update_url(self, q):
+    def update_url_bar(self, q):
+        # Atualizar a barra de URL conforme o navegador navega
         self.url_bar.setText(q.toString())
+        self.url_bar.setCursorPosition(0)
 
-    def closeEvent(self, event):
-        self.save_cookies()
-
-    def save_cookies(self):
-        # Exemplo de salvamento e leitura de cookies
-        cookie_jar = self.current_tab().profile().cookieStore()
-        cookie_jar.cookiesChanged.connect(self.on_cookies_changed)
-
-    def on_cookies_changed(self, cookies):
-        print(f"Cookies atualizados: {cookies}")
-
-if __name__ == '__main__':
-    # Configurar antes de criar o QApplication
-    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-
+if __name__ == "__main__":
     app = QApplication(sys.argv)
-
-    window = BrowserWindow()
-    window.show()
-
+    navegador = Navegador()
+    navegador.show()
     sys.exit(app.exec_())
