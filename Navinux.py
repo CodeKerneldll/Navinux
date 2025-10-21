@@ -1,8 +1,8 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtGui import QIcon
+from PyQt6.QtCore import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtWebEngineWidgets import *
+from PyQt6.QtGui import QIcon
 import os
 
 class Navegador(QMainWindow):
@@ -105,7 +105,6 @@ class Navegador(QMainWindow):
         self.new_tab()
 
     def new_tab(self):
-        # Criar um navegador para uma nova aba
         tab = QWidget()
         browser = QWebEngineView()
         browser.setUrl(QUrl("http://www.google.com"))
@@ -122,21 +121,18 @@ class Navegador(QMainWindow):
         self.browser.setCurrentIndex(index)
 
     def new_window(self):
-        """Abrir uma nova janela"""
-        new_window = Navegador()  # Cria uma nova instância do navegador
+        new_window = Navegador()
         new_window.show()
 
     def new_incognito_tab(self):
-        """Abrir uma nova aba em modo anônimo"""
         tab = QWidget()
         browser = QWebEngineView()
         browser.setUrl(QUrl("http://www.google.com"))
         browser.urlChanged.connect(self.update_url_bar)
 
-        # Definir configurações de navegação anônima
         settings = browser.settings()
-        settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
-        settings.setAttribute(QWebEngineSettings.LocalStorageEnabled, False)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
+        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, False)
         
         layout = QVBoxLayout()
         layout.addWidget(browser)
@@ -152,24 +148,19 @@ class Navegador(QMainWindow):
             self.close()
 
     def navigate_to_url(self):
-        # Navegar para a URL digitada
         url = self.url_bar.text()
         current_browser = self.browser.currentWidget().findChild(QWebEngineView)
         current_browser.setUrl(QUrl(url))
 
     def update_url_bar(self, q):
-        # Atualizar a barra de URL conforme o navegador navega
-        self.url_bar.setText(q.toString())
-        self.url_bar.setCursorPosition(0)
+        self.url_bar.setText(q.toString())  # PyQt6 mantém o QUrl.toString()
 
     def add_to_history(self, q):
-        """Adicionar URL ao histórico"""
         url = q.toString()
         if url not in self.history:
             self.history.append(url)
 
     def show_history(self):
-        """Mostrar o histórico de navegação em um menu"""
         history_dialog = QDialog(self)
         history_dialog.setWindowTitle("Histórico")
         history_dialog.setMinimumWidth(400)
@@ -181,14 +172,12 @@ class Navegador(QMainWindow):
         layout.addWidget(list_widget)
         
         history_dialog.setLayout(layout)
-        history_dialog.exec_()
+        history_dialog.exec()
 
     def clear_history(self):
-        """Limpar o histórico de navegação"""
         self.history.clear()
 
     def show_favorites(self):
-        """Mostrar os favoritos em um menu"""
         favorites_dialog = QDialog(self)
         favorites_dialog.setWindowTitle("Favoritos")
         favorites_dialog.setMinimumWidth(400)
@@ -200,33 +189,31 @@ class Navegador(QMainWindow):
         layout.addWidget(list_widget)
         
         favorites_dialog.setLayout(layout)
-        favorites_dialog.exec_()
+        favorites_dialog.exec()
 
     def add_to_favorites(self):
-        """Adicionar a página atual aos favoritos"""
         current_browser = self.browser.currentWidget().findChild(QWebEngineView)
         current_url = current_browser.url().toString()
         if current_url not in self.favorites:
             self.favorites.append(current_url)
 
     def toggle_javascript(self):
-        """Alternar a ativação do JavaScript"""
         current_browser = self.browser.currentWidget().findChild(QWebEngineView)
         settings = current_browser.settings()
         if self.javascript_enabled_action.isChecked():
-            settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
         else:
-            settings.setAttribute(QWebEngineSettings.JavascriptEnabled, False)
+            settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, False)
 
     def toggle_theme(self):
-        """Alternar entre tema claro e escuro"""
         if self.toggle_theme_action.isChecked():
             self.setStyleSheet("QMainWindow { background-color: #2e2e2e; color: white; }")
         else:
             self.setStyleSheet("QMainWindow { background-color: white; color: black; }")
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     navegador = Navegador()
     navegador.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
