@@ -18,4 +18,4 @@ Este projeto foi criado com o objetivo de fornecer uma alternativa leve e ágil 
 Para rodar o **Navinux**, você precisará do **Python 3** e das dependências do **PyQt5** e **PyQtWebEngine**. Use o seguinte comando para instalar as dependências:
 
 ```bash
-pip install PyQt5 PyQtWebEngine
+pip install PyQt6 PyQt6-WebEngine
