@@ -1,6 +1,6 @@
 # Navinux - Navegador Leve e Rápido
 
-**Navinux** é um navegador web desenvolvido com **PyQt5** e baseado no **QtWeb**, focado em desempenho e simplicidade. Ele oferece uma navegação rápida e eficiente, com suporte para múltiplas abas e uma interface minimalista.
+**Navinux** é um navegador web desenvolvido com **PyQt6** e baseado no **QtWeb**, focado em desempenho e simplicidade. Ele oferece uma navegação rápida e eficiente, com suporte para múltiplas abas e uma interface minimalista.
 
 Este projeto foi criado com o objetivo de fornecer uma alternativa leve e ágil para navegar na web, sem perder a funcionalidade ou desempenho. O **Navinux** é ideal para computadores com recursos limitados, mas também funciona muito bem em sistemas modernos.
 
