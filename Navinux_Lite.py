@@ -1,8 +1,8 @@
 import sys
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtWebEngineWidgets import *
-from PyQt5.QtGui import QIcon
+from PyQt6.QtCore import QUrl
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTabWidget, QWidget, QVBoxLayout, QLineEdit, QToolBar, QAction
+from PyQt6.QtWebEngineWidgets import QWebEngineView
+from PyQt6.QtGui import QIcon
 
 class Navegador(QMainWindow):
     def __init__(self):
@@ -57,6 +57,9 @@ class Navegador(QMainWindow):
         browser = QWebEngineView()
         browser.setUrl(QUrl("http://www.google.com"))  # Página inicial
 
+        # Conecta a mudança de URL para atualizar a barra
+        browser.urlChanged.connect(self.update_url_bar)
+
         # Adiciona o navegador à aba
         layout = QVBoxLayout()
         layout.addWidget(browser)
@@ -76,6 +79,8 @@ class Navegador(QMainWindow):
     def navigate_to_url(self):
         """Navegar para a URL digitada na barra de URL."""
         url = self.url_bar.text()
+        if not url.startswith("http"):
+            url = "http://" + url
         current_browser = self.browser.currentWidget().findChild(QWebEngineView)
         current_browser.setUrl(QUrl(url))
 
@@ -88,4 +93,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     navegador = Navegador()
     navegador.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
