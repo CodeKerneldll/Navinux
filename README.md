@@ -21,4 +21,4 @@ Para rodar o **Navinux**, você precisará do **Python 3** e das dependências d
 pip install PyQt6 PyQt6-WebEngine
 
 
-**Para Usar A Versão .exe Entre Em https://github.com/CodeKerneldll/Navinux/releases**
+Para Usar A Versão .exe Entre Em https://github.com/CodeKerneldll/Navinux/releases
